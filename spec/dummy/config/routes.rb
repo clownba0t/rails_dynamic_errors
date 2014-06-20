@@ -1,4 +1,7 @@
 Dummy::Application.routes.draw do
+  resources :things
+  resources :booms
+
   # This line mounts RailDynamicErrors' routes on the '/errors' path of your
   # application. This means that any requests to URLs with this prefix in their
   # path will go to RailsDynamicErrors for processing.

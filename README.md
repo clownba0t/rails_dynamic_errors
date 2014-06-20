@@ -1,7 +1,13 @@
 rails_dynamic_errors
 ====================
 
-## Installation:
+Rails provides a decently robust means of catching and handling any unhandled exceptions that bubble up from your application. This is done with two middlewares - ActionDispatch::DebugExceptions, which generates a 404 for non-existent routes and logs exceptions, and ActionDispatch::ShowExceptions, which catches any unhandled exceptions and returns a static page to the user (from the public/ directory of your application).
+
+It's often beneficial to be able to generate dynamic error pages, however, especially for 'safe' errors such as 404s. This gem is designed to provide that functionality. Its key features are:
+* Selective processing - configure the errors you wish to catch, and let Rails handle everything else
+* Retains the ability to use the session, flash and cookies (something a lot of dynamic error generation approaches do not)
+
+## Installation
 
 From within your Rails application's base directory:
 
@@ -18,7 +24,7 @@ From within your Rails application's base directory:
 	rails g rails_dynamic_errors:install
 
 
-## Configuration:
+## Configuration
 
 #### HTTP Error Codes to Handle
 Out of the box, rails_dynamic_errors doesn't actually handle any errors from your application. To enable its generation of dynamic error pages, you must first configure it with a list of HTTP status codes that should be handled. This should be done within your application configuration in config/application.rb.
@@ -33,7 +39,7 @@ To generate dynamic errors for any HTTP status code, simply add it to the array.
 
 rails_dynamic_errors uses a Rack middleware behind the scenes to capture errors. The error processing and page generation is then handled by a controller, which is routed to from the middleware. This means that rails_dynamic_errors has to install some routes in your application. This is also carried out by the install generator, which adds a line to your application's config/routes.rb to mount the gem's engine. By default this is mounted at '/errors', but you are welcome to change it,
 
-## Usage:
+## Usage
 
 Once installed and configured, rails_dynamic_errors will automatically capture all application errors that result in HTTP status codes in the list of codes to handle (as configured above) and generate dynamic error pages for them. See below for more information on each step of this process (and how to customise it).
 
@@ -100,7 +106,7 @@ Returns a short error name associated with the error. If the error code is a HTT
 *`error_message`
 Returns the message in the exception that caused the error (if there is one), otherwise a default message.
 
-## Notes:
+## Notes
 
 #### 500 Errors
 
@@ -113,3 +119,4 @@ The gem inserts the middleware it uses into your application's middleware stack 
 ## TO DO
 * Testing to ensure 500 errors don't blow up the application
 * Prevent insertion of middleware if it's already inserted? Or perhaps shift it to the bottom instead?
+* I18n support (especially for error names and messages)

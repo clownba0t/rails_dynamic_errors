@@ -6,10 +6,10 @@ describe RailsDynamicErrors::ErrorsController do
       @error_code = 404
     end
 
-    it "makes the status code available" do
+    it "makes the error code available" do
       build_environment_after_exception_for_status_code(@error_code)
       get :show, code: @error_code, use_route: :rails_dynamic_errors
-      controller.send(:status_code).should eq(@error_code.to_s)
+      controller.send(:error_code).should eq(@error_code.to_s)
     end
 
     context "makes a friendly error name available" do
@@ -17,15 +17,15 @@ describe RailsDynamicErrors::ErrorsController do
         it "returns the name associated with that status code" do
           build_environment_after_exception_for_status_code(@error_code)
           get :show, code: @error_code, use_route: :rails_dynamic_errors
-          controller.send(:status_name).should eq("Not Found")
+          controller.send(:error_name).should eq("Not Found")
         end
       end
 
       context "when the status code is not a valid HTTP status code" do
-        it "returns 'Error'" do
-          controller.env["PATH_INFO"] = "#{RailsDynamicErrors::Engine.mounted_at}/my_error"
+        it "returns 'Internal Server Error'" do
+          controller.env["PATH_INFO"] = "/my_error"
           get :show, code: 'my_error', use_route: :rails_dynamic_errors
-          controller.send(:status_name).should eq("Error")
+          controller.send(:error_name).should eq("Internal Server Error")
         end
       end
     end
@@ -41,7 +41,7 @@ describe RailsDynamicErrors::ErrorsController do
 
       context "when the error was not caused by an exception" do
         it "returns nil" do
-          controller.env["PATH_INFO"] = "/errors/@error_code"
+          controller.env["PATH_INFO"] = "/#{@error_code}"
           get :show, code: @error_code, use_route: :rails_dynamic_errors
           controller.send(:exception).should eq(nil)
         end

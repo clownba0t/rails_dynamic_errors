@@ -10,12 +10,6 @@ describe RailsDynamicErrors::DynamicErrors do
     Rails.application.routes.stub(:call)
   end
 
-  context "on initialisation" do
-    it "raises an error if HTTP error codes to handle is not an array" do
-      expect { RailsDynamicErrors::DynamicErrors.new(@app, nil) }.to raise_error(ArgumentError)
-    end
-  end
-
   context "when an exception bubbles up from the Rails application or a middleware further down the stack" do
     before(:each) do
       @exception = ActionController::RoutingError.new("Not Found")
@@ -26,7 +20,7 @@ describe RailsDynamicErrors::DynamicErrors do
 
     context "and it is configured to handle the HTTP status code that exception is associated with" do
       before(:each) do
-        @middleware = RailsDynamicErrors::DynamicErrors.new(@app, [ 404 ])
+        @middleware = middleware_to_handle_codes(@app, [404])
       end
 
       it "updates the environment of the request to point to a path that will generate a dynamic error page for the status code" do
@@ -47,7 +41,7 @@ describe RailsDynamicErrors::DynamicErrors do
 
     context "and it is not configured to handle the HTTP status code that exception is associated with" do
       it "re-raises the exception" do
-        middleware = RailsDynamicErrors::DynamicErrors.new(@app, [])
+        middleware = middleware_to_handle_codes(@app, [])
         expect { middleware.call(@input_env) }.to raise_error(@exception)
       end
     end
@@ -62,7 +56,7 @@ describe RailsDynamicErrors::DynamicErrors do
 
     context "and it is configured to handle 404 status codes" do
       before(:each) do
-        @middleware = RailsDynamicErrors::DynamicErrors.new(@app, [ 404 ])
+        @middleware = middleware_to_handle_codes(@app, [404])
       end
 
       it "updates the environment of the request to point to a path that will generate a dynamic error page for the status code" do
@@ -83,11 +77,20 @@ describe RailsDynamicErrors::DynamicErrors do
 
     context "and it is not configured to handle 404 status codes" do
       it "passes on the response" do
-        middleware = RailsDynamicErrors::DynamicErrors.new(@app, [])
+        middleware = middleware_to_handle_codes(@app, [])
         response = middleware.call(@input_env)
         response.should eq([404, {'X-Cascade' => 'pass'}, ['Not Found']])
       end
     end
+  end
+
+  def middleware_to_handle_codes(app, codes)
+    handle_codes(codes)
+    RailsDynamicErrors::DynamicErrors.new(app)
+  end
+
+  def handle_codes(codes)
+    Rails.application.config.rails_dynamic_errors.http_error_status_codes_to_handle = codes
   end
 
   def env_for(url, options = {})

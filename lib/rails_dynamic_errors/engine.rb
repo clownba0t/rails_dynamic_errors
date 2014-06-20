@@ -13,7 +13,7 @@ module RailsDynamicErrors
 
     initializer "rails_dynamic_errors.install_middleware" do |app|
       # Avoid inserting if already inserted?
-      app.middleware.use RailsDynamicErrors::DynamicErrors, config.rails_dynamic_errors.http_error_codes_to_handle
+      app.middleware.use RailsDynamicErrors::DynamicErrors
     end
 
     # Returns path at which the engine is mounted 

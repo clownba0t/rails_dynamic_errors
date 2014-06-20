@@ -2,10 +2,8 @@ require 'action_dispatch/middleware/exception_wrapper'
 
 module RailsDynamicErrors
   class DynamicErrors
-    def initialize(app, http_error_codes_to_handle)
-      raise ArgumentError, "http_error_codes_to_handle must be an Array" if ! http_error_codes_to_handle.is_a?(Array)
+    def initialize(app)
       @app = app
-      @http_error_codes_to_handle = http_error_codes_to_handle
     end
 
     def call(env)
@@ -28,6 +26,14 @@ module RailsDynamicErrors
         can_handle_status_code?(404)
       end
 
+      def can_handle_status_code?(status_code)
+        http_error_codes_to_handle.include?(status_code)
+      end
+
+      def http_error_codes_to_handle
+        Rails.application.config.rails_dynamic_errors.http_error_status_codes_to_handle || []
+      end
+
       def request_unhandled?(response)
         # Returned by Rails when no matching route was found
         [404, {'X-Cascade' => 'pass'}, ['Not Found']] == response
@@ -45,10 +51,6 @@ module RailsDynamicErrors
       def exception_status_code(env, exception)
         wrapper = ActionDispatch::ExceptionWrapper.new(env, exception)
         wrapper.status_code
-      end
-
-      def can_handle_status_code?(status_code)
-        @http_error_codes_to_handle.include?(status_code)
       end
 
       def generate_dynamic_error_page(env, exception, status_code)

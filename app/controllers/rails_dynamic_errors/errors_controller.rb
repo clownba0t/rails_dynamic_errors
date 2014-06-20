@@ -14,11 +14,11 @@ module RailsDynamicErrors
       end
   
       def template
-        template_exists?(status_code.to_s, "errors") ? status_code.to_s : "show"
+        template_exists?(status_code, "errors") ? status_code : "show"
       end
   
       def status_code
-        @status_code ||= env["PATH_INFO"][1..-1].to_i
+        params[:code]
       end
 
       def status_name

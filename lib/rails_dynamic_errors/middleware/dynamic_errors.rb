@@ -8,6 +8,12 @@ module RailsDynamicErrors
   #
   # The middleware is inserted into the Rails application's middleware stack
   # automatically. As such, the end user should never need to use it directly.
+  #
+  # In order to avoid disrupting standard Rails functionality, this middleware
+  # respects the Rails exception handling related configuration options. As
+  # such, it will only process exceptions and error conditions if:
+  # * the request is not local (action_dispatch.show_detailed_exceptions is false)
+  # * the environment is set to display exceptions (rather than raise them)
   # 
   # Configuration of which exceptions and error conditions to catch is done
   # within the main Rails application's configuration, using an option set
@@ -29,16 +35,24 @@ module RailsDynamicErrors
       # ActionDispatch::DebugExceptions. If we're supposed to catch 404s and
       # the application indicates there was no matching route, throw and
       # handle a 404 generating exception
-      if catch_not_found_error? && request_unhandled?(response)
+      if can_process_exceptions?(env) && catch_not_found_error? && request_unhandled?(response)
         raise ActionController::RoutingError.new("No route matches [#{env['REQUEST_METHOD']}] #{env['PATH_INFO'].inspect}")
       else
         response
       end
     rescue Exception => exception
-      process_exception(env, exception)
+      if can_process_exceptions?(env)
+        process_exception(env, exception)
+      else
+        raise exception
+      end
     end
 
     private
+      def can_process_exceptions?(env)
+        env['action_dispatch.show_exceptions'] && ! env['action_dispatch.show_detailed_exceptions']
+      end
+
       def catch_not_found_error?
         can_handle_http_error_status_code?(404)
       end

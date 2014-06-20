@@ -23,14 +23,14 @@ module RailsDynamicErrors
 
     private
       def catch_not_found_error?
-        can_handle_status_code?(404)
+        can_handle_http_error_status_code?(404)
       end
 
-      def can_handle_status_code?(status_code)
-        http_error_codes_to_handle.include?(status_code)
+      def can_handle_http_error_status_code?(status_code)
+        http_error_status_codes_to_handle.include?(status_code)
       end
 
-      def http_error_codes_to_handle
+      def http_error_status_codes_to_handle
         Rails.application.config.rails_dynamic_errors.http_error_status_codes_to_handle || []
       end
 
@@ -40,15 +40,15 @@ module RailsDynamicErrors
       end
 
       def process_exception(env, exception)
-        status_code = exception_status_code(env, exception)
-        if can_handle_status_code?(status_code)
+        status_code = exception_http_error_status_code(env, exception)
+        if can_handle_http_error_status_code?(status_code)
           generate_dynamic_error_page(env, exception, status_code)
         else
           raise exception
         end
       end
 
-      def exception_status_code(env, exception)
+      def exception_http_error_status_code(env, exception)
         wrapper = ActionDispatch::ExceptionWrapper.new(env, exception)
         wrapper.status_code
       end

@@ -17,7 +17,7 @@ describe RailsDynamicErrors::InstallGenerator do
 
   it "inserts options into config/application.rb" do
     text = <<-INSERTION
-    # config.rails_dynamic_errors.http_error_codes_to_handle = [404, 422]
+    # config.rails_dynamic_errors.http_error_status_codes_to_handle = [404, 422]
     INSERTION
     File.read(@config_application_file).should include(text)
   end

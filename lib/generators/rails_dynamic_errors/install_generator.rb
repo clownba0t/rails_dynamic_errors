@@ -26,7 +26,7 @@ module RailsDynamicErrors
 
     # Mount the gem's engine in the application at the default '/errors' path
     def notify_about_routes
-      insert_into_file File.join('config', 'routes.rb'), :after => "Rails.application.routes.draw do\n" do
+      insert_into_file File.join('config', 'routes.rb'), :after => ".routes.draw do\n" do
         %Q{
   # This line mounts RailDynamicErrors' routes on the '/errors' path of your
   # application. This means that any requests to URLs with this prefix in their

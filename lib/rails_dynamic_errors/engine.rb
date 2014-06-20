@@ -5,12 +5,6 @@ module RailsDynamicErrors
     # Add configuration options within namespace in the main application
     config.rails_dynamic_errors = ActiveSupport::OrderedOptions.new
 
-    initializer "rails_dynamic_errors.load_app_instance_data" do |app|
-      RailsDynamicErrors.setup do |config|
-        config.app_root = app.root
-      end
-    end
-
     initializer "rails_dynamic_errors.install_middleware" do |app|
       # Avoid inserting if already inserted?
       app.middleware.use RailsDynamicErrors::DynamicErrors

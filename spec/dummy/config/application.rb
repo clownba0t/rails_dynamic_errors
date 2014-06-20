@@ -25,7 +25,7 @@ module Dummy
     # setup is [404, 422], which will catch the two main errors (excluding the
     # dreaded 500 Internal Server Error) for which Rails provides static HTML
     # error pages.
-    # config.rails_dynamic_errors.http_error_codes_to_handle = [404, 422]
+    config.rails_dynamic_errors.http_error_codes_to_handle = [404, 422]
     
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers

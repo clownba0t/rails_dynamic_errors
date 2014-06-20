@@ -1,11 +1,28 @@
 require 'action_dispatch/middleware/exception_wrapper'
 
 module RailsDynamicErrors
+  # This is a Rack compatible middleware that implements the key functionality
+  # of the rails_dynamic_errors gem. It serves two roles:
+  # * intercept unhandled exceptions and error conditions from the Rail application it is inserted into
+  # * generate dynamic error pages for the exceptions and error conditions it is configured to
+  #
+  # The middleware is inserted into the Rails application's middleware stack
+  # automatically. As such, the end user should never need to use it directly.
+  # 
+  # Configuration of which exceptions and error conditions to catch is done
+  # within the main Rails application's configuration, using an option set
+  # namespaced to rails_dynamic_errors. Specifically:
+  #
+  # Rails.application.config.rails_dynamic_errors.http_error_status_codes_to_handle
+  #
+  # This option must be an array of integer HTTP error status codes (404, etc.)
   class DynamicErrors
+    # Initialize the middleware (standard Rack method)
     def initialize(app)
       @app = app
     end
 
+    # Call the middleware (standard Rack method)
     def call(env)
       response = @app.call(env)
       # 404 errors for unmatched routes aren't actually raised until

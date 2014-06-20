@@ -50,7 +50,7 @@ module RailsDynamicErrors
 
     private
       def can_process_exceptions?(env)
-        env['action_dispatch.show_exceptions'] && ! env['action_dispatch.show_detailed_exceptions']
+        ! env['action_dispatch.show_detailed_exceptions'] && env['action_dispatch.show_exceptions']
       end
 
       def catch_not_found_error?

@@ -10,11 +10,11 @@ module RailsDynamicErrors
   
     private
       def layout
-        template_exists?("errors", "layouts") ? "errors" : "application"
+        template_exists?('errors', 'layouts') ? 'errors' : 'application'
       end
   
       def template
-        template_exists?(status_code, "errors") ? status_code : "show"
+        template_exists?(status_code, 'rails_dynamic_errors/errors') ? status_code : 'show'
       end
   
       def status_code
@@ -22,7 +22,7 @@ module RailsDynamicErrors
       end
 
       def status_name
-        @status_name ||= Rack::Utils::HTTP_STATUS_CODES.fetch(status_code.to_i, "Error")
+        @status_name ||= Rack::Utils::HTTP_STATUS_CODES.fetch(status_code.to_i, 'Error')
       end
   
       def error_message

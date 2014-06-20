@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Dynamic error page generation in Rails"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
+  s.test_files = Dir["spec/**/*"]
 
   s.add_dependency "rails", "~> 4.0.5"
 

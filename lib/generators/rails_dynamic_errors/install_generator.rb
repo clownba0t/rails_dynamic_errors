@@ -1,10 +1,12 @@
 require 'rails/generators'
 
 module RailsDynamicErrors
+  # This is a generator that is used to install rails_dynamic_errors into a
+  # Rails application. It runs all of the methods below.
   class InstallGenerator < Rails::Generators::Base
-
-    # Allow gem users to decorate (class_eval or completely redefine)
-    # ErrorsController to suit their purposes
+    # Add the gem configuration options to the Rails application's
+    # config/application.rb file. These are all disabled by default so as to
+    # cause minimum intrusion upon install.
     def configure_application
       application <<-APP
     # This option is used to set the HTTP error codes for which
@@ -16,7 +18,9 @@ module RailsDynamicErrors
       APP
     end
 
-    # Mount the gem's engine in the application at the default '/errors' path
+    # Add mounting of the gem's engine to the the Rails application's
+    # config/routes.rb file. The default mount path can be found in the
+    # documentation for the RailsDynamicErrors module.
     def notify_about_routes
       insert_into_file File.join('config', 'routes.rb'), :before => /^end/ do
         %Q{

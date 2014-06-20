@@ -8,8 +8,8 @@ module RailsDynamicErrors
     def configure_application
       application <<-APP
 
+    # Load the ErrorsController decorator class (if there is one)
     config.to_prepare do
-      # Load the ErrorsController decorator class (if there is one)
       Dir.glob(File.join(File.dirname(__FILE__), "../app/controllers/errors_controller_decorator.rb")) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end

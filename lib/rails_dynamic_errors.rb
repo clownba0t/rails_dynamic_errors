@@ -5,7 +5,7 @@ require 'generators/rails_dynamic_errors/install_generator'
 # the README for more information.
 module RailsDynamicErrors
   # The default mount point for the gem's engine
-  DEFAULT_MOUNT_POINT = '/errors'
+  DEFAULT_MOUNT_PATH = '/errors'
 end
 
 require 'rails_dynamic_errors/engine'

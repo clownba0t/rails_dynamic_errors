@@ -27,6 +27,6 @@ describe RailsDynamicErrors::InstallGenerator do
   end
 
   it "mounts the engine in config/routes.rb at the 'errors' path" do
-    assert_file "config/routes.rb", /mount RailsDynamicErrors::Engine, at: '#{RailsDynamicErrors::DEFAULT_MOUNT_POINT}'/
+    assert_file "config/routes.rb", /mount RailsDynamicErrors::Engine, at: '#{RailsDynamicErrors::DEFAULT_MOUNT_PATH}'/
   end
 end

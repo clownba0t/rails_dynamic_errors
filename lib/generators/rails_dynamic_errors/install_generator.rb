@@ -26,7 +26,7 @@ module RailsDynamicErrors
   #
   # If you would like to change where this engine is mounted, simply change the
   # :at option to something different.
-  mount RailsDynamicErrors::Engine, at: 'errors'
+  mount RailsDynamicErrors::Engine, at: '#{RailsDynamicErrors::DEFAULT_MOUNT_POINT}'
         }
       end
     end

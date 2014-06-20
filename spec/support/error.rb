@@ -14,6 +14,6 @@ HTTP_STATUS_CODE_RAILS_EXCEPTIONS = {
 
 def build_environment_after_exception_for_status_code(status_code, message = nil)
   @exception = HTTP_STATUS_CODE_RAILS_EXCEPTIONS.fetch(status_code, Exception).new(message)
-  controller.env["PATH_INFO"] = "#{status_code}"
+  controller.env["PATH_INFO"] = "/#{status_code}"
   controller.env["action_dispatch.exception"] = @exception
 end

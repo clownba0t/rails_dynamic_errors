@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe "rails_dynamic_errors/errors/show.html.erb" do
   before(:each) do
-    view.stub(:status_code).and_return("404")
-    view.stub(:status_name).and_return("Not Found")
+    view.stub(:error_code).and_return("404")
+    view.stub(:error_name).and_return("Not Found")
     view.stub(:error_message).and_return("Sorry, we couldn't find what you're looking for.")
   end
 

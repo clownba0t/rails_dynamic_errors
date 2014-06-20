@@ -113,7 +113,7 @@ Returns the message in the exception that caused the error (if there is one), ot
 
 #### 500 Errors
 
-500 errors have typically been a thorn in the side of dynamic error generation. After all, if your dynamic error generation code or code that it relies on is broken, then your application is liable to die. Whether you want to tackle this beast or not is entirely up to you. In theory it should be safe, as any exceptions raised within the dynamic error page generation should simply bubble up the middleware stack until they hit ActionDispatch::ShowExceptions where the default static 500.html page will be rendered.
+500 errors have typically been a thorn in the side of dynamic error generation. After all, if your dynamic error generation code or code that it relies on is broken, then your application is liable to die. Whether you want to tackle this beast or not is entirely up to you. In theory it should be safe, as any exceptions raised within the dynamic error page generation should simply bubble up the middleware stack until they hit ActionDispatch::ShowExceptions, where the default static 500.html page will be rendered.
 
 #### Middleware Ordering
 

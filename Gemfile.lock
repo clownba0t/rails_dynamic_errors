@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rails_dynamic_errors (0.0.5)
+    rails_dynamic_errors (0.0.6)
       rails (>= 4.0.0)
 
 GEM

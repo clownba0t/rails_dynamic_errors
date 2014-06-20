@@ -95,15 +95,18 @@ Additionally, custom templates can be created for each error code you expect to 
 
 ###### View Helpers
 
-Several helper methods are available for use within your error templates:
+Several helper methods are available for use within your templates:
 
-*`error_code`*
+`error_code`
+
 Returns the error code provided in the path
 
-*`error_name`*
+`error_name`
+
 Returns a short error name associated with the error. If the error code is a HTTP status code this will be the appropriate error name ("Not Found" for 404, etc.), otherwise "Internal Server Error" is returned.
 
-*`error_message`
+`error_message`
+
 Returns the message in the exception that caused the error (if there is one), otherwise a default message.
 
 ## Notes
@@ -117,6 +120,7 @@ Returns the message in the exception that caused the error (if there is one), ot
 The gem inserts the middleware it uses into your application's middleware stack at the bottom. Depending on your application's setup (configuration, other gems, gem load order, etc.), however, this location may change in the final list of middlewares. Please be aware that due to the way the middleware works, the 'after' functionality of any middlewares located between the application and this gem's middleware will not work. If this is a problem, you will need to reorder the middlewares to ensure that RailsDynamicErrors::DynamicErrors is located at the very bottom of the stack.
 
 ## TO DO
-* Testing to ensure 500 errors don't blow up the application
+* Tests for ensuring 500 errors don't blow up the application
 * Prevent insertion of middleware if it's already inserted? Or perhaps shift it to the bottom instead?
 * I18n support (especially for error names and messages)
+* Tests for changed mount point

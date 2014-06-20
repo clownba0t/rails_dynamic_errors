@@ -22,17 +22,6 @@ describe RailsDynamicErrors::InstallGenerator do
     File.read(@config_application_file).should include(text)
   end
 
-  it "inserts decorator overrides into config/application.rb" do
-    text = <<-INSERTION
-    config.to_prepare do
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/controllers/errors_controller_decorator.rb")) do |c|
-        Rails.configuration.cache_classes ? require(c) : load(c)
-      end
-    end
-    INSERTION
-    File.read(@config_application_file).should include(text)
-  end
-
   it "mounts the engine in config/routes.rb" do
     assert_file "config/routes.rb", /mount RailsDynamicErrors::Engine/
   end

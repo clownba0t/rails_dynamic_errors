@@ -7,14 +7,6 @@ module RailsDynamicErrors
     # ErrorsController to suit their purposes
     def configure_application
       application <<-APP
-
-    # Load the ErrorsController decorator class (if there is one)
-    config.to_prepare do
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/controllers/errors_controller_decorator.rb")) do |c|
-        Rails.configuration.cache_classes ? require(c) : load(c)
-      end
-    end
-
     # This option is used to set the HTTP error codes for which
     # rails_dynamic_errors will generate dynamic error pages. A good default
     # setup is [404, 422], which will catch the two main errors (excluding the

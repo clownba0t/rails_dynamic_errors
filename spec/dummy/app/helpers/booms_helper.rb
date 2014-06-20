@@ -1,0 +1,2 @@
+module BoomsHelper
+end

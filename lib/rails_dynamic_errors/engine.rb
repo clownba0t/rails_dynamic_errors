@@ -19,7 +19,6 @@ module RailsDynamicErrors
   #
   # Note: the engine is namespaced to 'RailsDynamicErrors'.
   class Engine < ::Rails::Engine
-    isolate_namespace RailsDynamicErrors
     extend EngineHelper::ClassMethods
 
     # Add configuration options within namespace in the main application

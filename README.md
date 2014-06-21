@@ -5,10 +5,10 @@ Rails provides robust handling of most exceptions that escape from your applicat
 
 This gem is designed to provide this functionality. Its key features are:
 
-* Selective processing *
+*Selective processing*
 Configure the HTTP error status codes you wish to process dynamically, and everything else will be passed through to Rails for default handling.
 
-* Rails middleware functionality preservation *
+*Rails middleware functionality preservation*
 The session, flash and cookies can all be used for dynamic error page generation. This is something which is not available with a lot of existing dynamic error generation approaches.
 
 ## Installation
@@ -17,15 +17,15 @@ From within your Rails application's base directory:
 
 1. Edit your Gemfile and add:
 
-        gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git'
+`gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git'`
 
 2. Install the gem:
 
-	bundle
+`bundle`
 
 3. Run the included install generator:
 
-	rails g rails_dynamic_errors:install
+`rails g rails_dynamic_errors:install`
 
 
 ## Configuration
@@ -60,10 +60,11 @@ Note that this is a glob route. Although it is primarily designed for HTTP error
 
 The dynamic page generation is handled by a controller within the gem. You are more than welcome to modify or completely override the functionality provided by this controller within your application as follows:
 
-1. Redefinition (override):
+* Redefinition (override):
 
 ```
 # app/controllers/rails_dynamic_errors/errors_controller.rb
+
 class RailsDynamicErrors::ErrorsController < RailsDynamicErrors::ApplicationController
   .
   .
@@ -71,18 +72,20 @@ class RailsDynamicErrors::ErrorsController < RailsDynamicErrors::ApplicationCont
 end
 ```
 
-2. 'Decoration':
+* 'Decoration':
 
 ```
 # app/controllers/rails_dynamic_errors/errors_controller.rb
+
 RailsDynamicErrors::ErrorsController.class_eval do
 end
 ```
 
-3. Monkey patch via an initializer:
+* Monkey patch via an initializer:
 
 ```
 # config/initializers/rails_dynamic_errors_errors_controller.rb
+
 RailsDynamicErrors::ErrorsController.class_eval do
 end
 ```
@@ -134,7 +137,9 @@ The gem inserts the middleware it uses into your application's middleware stack 
 * I18n support (especially for error names and messages)
 * Tests for:
   * functionality if the mount point is changed
-  * errors during generation being passed on to Rails
-  * 500 errors, in particular, not destroying the application
+  * exception during processing -> Rails 500 page
   * ability to use sessions, flash and cookies
+  * routes
+  * impact on application after install but before generator install
+* DRY up specs
 * Install generator to copy default 'show' template into application for modification

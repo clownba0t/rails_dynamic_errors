@@ -11,7 +11,7 @@ Particularly for 'safe' errors such as 404s, there's no real reason why dynamic 
 
 Configure the HTTP error status codes (404, 422, etc.) you wish to process dynamically. All other status codes will be passed through to Rails for default handling.
 
-**Respect's Rails' error handling strategy **
+**Respect's Rails' error handling strategy**
 
 Rails can be configured to show or raise exceptions in each environment. Additionally, it can be configured to return detailed exception information. This gem respects those configuration options, simply passing the responsibility for handling the error to Rails unless it is configured to show exceptions and not show detailed exceptions.
 
@@ -25,7 +25,7 @@ From within your Rails application's base directory:
 
 1. Edit your Gemfile and add:
 
-	`gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git'`
+	`gem 'rails_dynamic_errors'`
 
 2. Install the gem:
 
@@ -43,8 +43,8 @@ From within your Rails application's base directory:
 Rails' built in exception handling, which is what serves the static HTML error pages or produces detailed exception information, is controlled by two configuration options. These are:
 
 ```
-config.action_dispatch.show_exceptions		# Whether or not to show exceptions or raise them to the webserver (usually results in an empty page)
-config.consider_all_requests_local		# 'local' requests result in detailed exception information rather than the default static error page
+config.action_dispatch.show_exceptions     # Whether or not to show exceptions or raise them to the webserver (usually results in an empty page)
+config.consider_all_requests_local         # 'local' requests result in detailed exception information rather than the default static error page
 ```
 
 Please note that these options are set at the environment level (i.e. development, test, production) in the appropriate files within the `/config/environments` directory of your application.
@@ -107,6 +107,9 @@ end
 # app/controllers/rails_dynamic_errors/errors_controller.rb
 
 RailsDynamicErrors::ErrorsController.class_eval do
+  .
+  .
+  .
 end
 ```
 
@@ -116,6 +119,9 @@ end
 # config/initializers/rails_dynamic_errors_errors_controller.rb
 
 RailsDynamicErrors::ErrorsController.class_eval do
+  .
+  .
+  .
 end
 ```
 
@@ -189,6 +195,9 @@ Before the tests you want to run with <variable name> set to <value> (e.g. 'acti
   end
 ```
 
+#### Help
+This is my first gem, so there are no doubt many things that can be done to improve it. All constructive feedback, no matter how general or detailed, would be absolutely lovely. Or, you can fork, improve, pull-request ;)
+
 ## TO DO
 * Prevent insertion of middleware if it's already inserted? Or perhaps shift it to the bottom instead?
 * I18n support (especially for error names and messages)
@@ -198,5 +207,10 @@ Before the tests you want to run with <variable name> set to <value> (e.g. 'acti
   * ability to use sessions, flash and cookies
   * routes
   * impact on application after install but before generator install
+  * different versions of Rails
+  * tests for configuration option values
 * DRY up specs
-* Install generator to copy default 'show' template into application for modification
+* Install generator/rake task to copy default 'show' template into application for modification
+* Provide warnings in the log when invalid config options are received
+* HTTP status code checker (avoid status codes like 9999 in the options)
+* Update YARD doco

@@ -190,7 +190,7 @@ Before the tests you want to run with <variable name> set to <value> (e.g. 'acti
     around(:each)
       original = set_environment_variable('<variable name>', false)
       example.run
-      set_environment_variable('action_dispatch.show_exceptions', original)
+      set_environment_variable('<variable name>', original)
     end
   end
 ```

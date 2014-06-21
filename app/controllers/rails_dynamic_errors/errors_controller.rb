@@ -1,7 +1,7 @@
 require 'action_dispatch/middleware/exception_wrapper'
 
 module RailsDynamicErrors
-  class ErrorsController < ApplicationController
+  class ErrorsController < ::ApplicationController
     helper_method :error_code
     helper_method :error_name
     helper_method :error_message

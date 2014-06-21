@@ -17,7 +17,7 @@ From within your Rails application's base directory:
 
 1. Edit your Gemfile and add:
 
-        gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git', :tag => "v0.0.5"
+        gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git'
 
 2. Install the gem:
 

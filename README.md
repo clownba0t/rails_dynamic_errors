@@ -1,15 +1,23 @@
 rails_dynamic_errors
 ====================
 
-Rails provides robust handling of most exceptions that escape from your application, usually serving up one of the three static HTML pages that are automatically installed into the application's 'public' directory. This is great, but these pages may not be ideal for your project. For starters they are not pretty, and are certainly not appropriate for a production application. Additionally, their static nature means additional manual maintenance work to update them whenever links, styles or layouts change. Particularly in the case of 'safe' errors, such as 404s, there's no real reason why dynamic error pages can't be generated.
+## Motivation
 
-This gem is designed to provide this functionality. Its key features are:
+Rails provides robust exception handling out of the box via middleware and a set of static HTML pages in the `/public` directory of your application. However, this strategy is not always ideal, especially for production applications. The static HTML pages naturally do not reflect the layout of your application, and customizing them adds extra maintenance whenever that layout does change.
 
-*Selective processing*
-Configure the HTTP error status codes you wish to process dynamically, and everything else will be passed through to Rails for default handling.
+Particularly for 'safe' errors such as 404s, there's no real reason why dynamic error pages can't be generated. This gem is designed to provide this functionality. Its key features are:
 
-*Rails middleware functionality preservation*
-The session, flash and cookies can all be used for dynamic error page generation. This is something which is not available with a lot of existing dynamic error generation approaches.
+**Selective processing**
+
+Configure the HTTP error status codes (404, 422, etc.) you wish to process dynamically. All other status codes will be passed through to Rails for default handling.
+
+**Respect's Rails' error handling strategy **
+
+Rails can be configured to show or raise exceptions in each environment. Additionally, it can be configured to return detailed exception information. This gem respects those configuration options, simply passing the responsibility for handling the error to Rails unless it is configured to show exceptions and not show detailed exceptions.
+
+**Preserves Rails middleware functionality**
+
+Many existing dynamic error generation approaches leave these non-functional, which results in the flash, cookies and sessions (amongst other things) not functioning.
 
 ## Installation
 
@@ -17,32 +25,53 @@ From within your Rails application's base directory:
 
 1. Edit your Gemfile and add:
 
-`gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git'`
+	`gem 'rails_dynamic_errors', :git => 'git://github.com/clownba0t/rails_dynamic_errors.git'`
 
 2. Install the gem:
 
-`bundle`
+	`bundle`
 
 3. Run the included install generator:
 
-`rails g rails_dynamic_errors:install`
+	`rails g rails_dynamic_errors:install`
 
 
 ## Configuration
 
-#### HTTP Error Codes to Handle
+#### Rails Environment
 
-Out of the box, no dynamic error pages will be generated. The list of HTTP error status codes to generate dynamic error pages for must be configured within the aplpication's configuration in config/application.rb.
+Rails' built in exception handling, which is what serves the static HTML error pages or produces detailed exception information, is controlled by two configuration options. These are:
 
-The install generator adds a namespaced section for configuration of rails_dynamic_errors with examples of the major options, all disabled. If you'd like to use the default (recommended) setup, simply uncomment the following line:
+```
+config.action_dispatch.show_exceptions		# Whether or not to show exceptions or raise them to the webserver (usually results in an empty page)
+config.consider_all_requests_local		# 'local' requests result in detailed exception information rather than the default static error page
+```
 
-    # config.rails_dynamic_errors.http_error_codes_to_handle = [404, 422]
+Please note that these options are set at the environment level (i.e. development, test, production) in the appropriate files within the `/config/environments` directory of your application.
 
-To generate dynamic errors for any HTTP status code, simply add it to the array.
+In order to generate dynamic error pages in each environment, the options must be set as follows:
+
+```
+config.action_dispatch.show_exceptions = true
+config.consider_all_requests_local     = false
+```
+
+See the Notes section below for more information and a few gotchas.
+
+
+#### HTTP Error Status Codes to Handle
+
+Dynamic error page generation is handled selectively based on the HTTP error status code exceptions and error conditions map to. For example, ActiveRecord::RecordNotFound exceptions map to a status code of 404. So as to cause minimum intrustion, the installer does not enable the generation of any dynamic error pages. It does, however, add a configuration option that lets you specify which HTTP error statuc codes to handle to the top of the `/config/application.rb` file within your application, as follows:
+
+`    # config.rails_dynamic_errors.http_error_codes_to_handle = [404, 422]`
+
+Note that by default this option is disabled. If you would like to enable dynamic error page generation for the default (recommended) set of HTTP error status codes, simply uncomment it. To capture any set of HTTP error status codes, simply set the option to an array of integers representing those codes (see example above).
+
+Refer to ActionDispatch::ExceptionWrapper for details on which exceptions map to which HTTP error status codes.
 
 #### Routing
 
-Under the hood, error capturing is done using a Rack middleware which is inserted automatically into the application. The dynamic page generation is then handled by a controller, which is routed to from the middleware. For this to work, the gem's engine must be mounted in your application. The configuration for this is also added by the install generator, to your application's config/routes.rb. By default it is mounted at '/errors', but you are welcome to change it.
+The gem mounts an engine into your application that performs the dynamic error page generation. The installer adds the necessary configuration to the bottom of the `/config/routes.rb` file within your application. By default the engine is mounted at `/errors`, but you are more than welcome to change this if you wish.
 
 ## Usage
 
@@ -54,11 +83,11 @@ As mentioned above, the gem features an engine which is automatically mounted wi
 
 `/errors/*`
 
-Note that this is a glob route. Although it is primarily designed for HTTP errors (e.g. /errors/404), you can actually use it as a generic error handler simply by using an appropriate route. For example, you could geneate a dynamic error page for an error named 'invalid_ninja' with the route '/errors/invalid_ninja'. Handy!
+Note that this is a glob route. Although it is primarily designed for HTTP errors (e.g. `/errors/404`), you can actually use it as a generic error handler simply by routing to `/errors/<error code>/`. For example, you could generate a dynamic error page for an error of code `invalid_ninja` with the route `/errors/invalid_ninja`, which is quite handy.
 
 #### Controller
 
-The dynamic page generation is handled by a controller within the gem. You are more than welcome to modify or completely override the functionality provided by this controller within your application as follows:
+The dynamic page generation is handled by a controller within the gem. You are more than welcome to modify or completely override the functionality provided by this controller within your application, as follows:
 
 * Redefinition (override):
 
@@ -94,17 +123,17 @@ end
 
 ###### Layouts
 
-The gem does not contain any layouts. Rather, the error pages are built using the layouts in your application (i.e. in app/views/layouts). If an 'errors' layout exists in here it will be used, otherwise the default 'application' layout will be used.
+The gem does not contain any layouts. Rather, the error pages are built using the layouts in your application (i.e. in `/app/views/layouts`). If an `errors` layout exists in here it will be used, otherwise the default `application` layout will be used.
 
 ###### Templates
 
-The gem does contain an extremely simple default template for rendering errors using the 'show' action of the controller. You will almost definitely want to override it with a template of your own. You can do this by creating the following directory within your application:
+The gem does contain an extremely simple default template for rendering errors using the `#show` action of the controller. You will almost definitely want to override it with a template of your own. You can do this by creating the following directory within your application:
 
-app/views/rails_dynamic_errors/errors/
+`app/views/rails_dynamic_errors/errors/`
 
-Simply create a 'show' template in the format of your choice and it will take precedence over the gem's basic one.
+Simply create a `show` template in the format of your choice and it will take precedence over the gem's basic one.
 
-Additionally, custom templates can be created for each error code you expect to receive ('404', 'invalid_ninja', etc.), and they will be used in favour of the default 'show' template. Simply name them using the HTTP status code they pertain to (e.g. '404.html.erb') and place them in the directory above.
+Additionally, custom templates can be created for each error code you expect to receive (`404`, `invalid_ninja`, etc.), and they will be used in favour of the default `show` template. Simply name them using the HTTP status code they pertain to (e.g. `404.html.erb`) and place them in the directory above.
 
 ###### View Helpers
 
@@ -131,6 +160,34 @@ Returns the message in the exception that caused the error (if there is one), ot
 #### Middleware Ordering
 
 The gem inserts the middleware it uses into your application's middleware stack at the bottom. Depending on your application's setup (configuration, other gems, gem load order, etc.), however, this location may change in the final list of middlewares. Please be aware that due to the way the middleware works, the 'after' functionality of any middlewares located between the application and this gem's middleware will not work. If this is a problem, you will need to reorder the middlewares to ensure that RailsDynamicErrors::DynamicErrors is located at the very bottom of the stack.
+
+#### Rails' Exception Handling Configuration
+
+Please remember that each of the Rails environments (development, test and production) have their own exception handling configuration options. If you are encountering a situation where dynamic error pages are/aren't being generated when they shouldn't/should be, please check the values of these options first. This is particularly so for the test environment, which tends to be less 'explored' than the other environments.
+
+If you want to test what is produced by an exception with different combinations of the values for the two options mentioned above and don't want to or can't change the values in the environment file, consider using the following code (Rspec only, sorry):
+
+Add the following helper function to either your spec file, spec helper or support file:
+
+```
+  def set_environment_variable(variable, value)
+    original_value = Rails.application.env_config[variable]
+    Rails.application.env_config[variable] = value
+    original_value
+  end
+```
+
+Before the tests you want to run with <variable name> set to <value> (e.g. 'action_dispatch.show_detailed_exceptions' to false):
+
+```
+  context "tests with <variable name> set to <value>" do
+    around(:each)
+      original = set_environment_variable('<variable name>', false)
+      example.run
+      set_environment_variable('action_dispatch.show_exceptions', original)
+    end
+  end
+```
 
 ## TO DO
 * Prevent insertion of middleware if it's already inserted? Or perhaps shift it to the bottom instead?

@@ -3,21 +3,25 @@ rails_dynamic_errors
 
 ## Motivation
 
-Rails provides robust exception handling out of the box via middleware and a set of static HTML pages in the `/public` directory of your application. However, this strategy is not always ideal, especially for production applications. The static HTML pages naturally do not reflect the layout of your application, and customizing them adds extra maintenance whenever that layout does change.
+Rails provides robust exception handling out of the box via middleware and a set of static HTML pages in the `/public` directory. However, this strategy is not always ideal, especially for production applications. The static HTML pages naturally do not reflect the layout of your application, and customizing them adds extra maintenance whenever that layout does change.
 
-Particularly for 'safe' errors such as 404s, there's no real reason why dynamic error pages can't be generated. This gem is designed to provide this functionality. Its key features are:
+Particularly for so called 'safe' errors such as 404s, there's no real reason why dynamic error pages can't be generated. This gem is designed to provide this functionality. Its key features are:
 
 **Selective processing**
 
 Configure the HTTP error status codes (404, 422, etc.) you wish to process dynamically. All other status codes will be passed through to Rails for default handling.
 
-**Respect's Rails' error handling strategy**
+**Respects Rails' error handling strategy**
 
 Rails can be configured to show or raise exceptions in each environment. Additionally, it can be configured to return detailed exception information. This gem respects those configuration options, simply passing the responsibility for handling the error to Rails unless it is configured to show exceptions and not show detailed exceptions.
 
 **Preserves Rails middleware functionality**
 
 Many existing dynamic error generation approaches leave these non-functional, which results in the flash, cookies and sessions (amongst other things) not functioning.
+
+## Compatibility
+
+This gem has been tested on all versions of Rails between 4.0.0.beta1 and 4.1.4. Rails versions 1, 2 and 3 are not currently supported.
 
 ## Installation
 
@@ -207,7 +211,6 @@ This is my first gem, so there are no doubt many things that can be done to impr
   * ability to use sessions, flash and cookies
   * routes
   * impact on application after install but before generator install
-  * different versions of Rails
   * tests for configuration option values
 * DRY up specs
 * Install generator/rake task to copy default 'show' template into application for modification

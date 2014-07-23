@@ -1,5 +1,20 @@
 source "https://rubygems.org"
 
+# Enable Rails version to use to be supplied via the environment. Only sets the
+# Rails version if the environment variable is available, otherwise relies on
+# the dependency specified in the gemspec file. (This is why this code must
+# appear before the gemspec call, as only the first call to 'gem' with a given
+# gem name takes effect.)
+rails_version = ENV["RAILS_VERSION"]
+
+if rails_version
+  if "master" == rails_version
+    gem "rails",  {github: "rails/rails"}
+  else
+    gem "rails", "~> #{rails_version}"
+  end
+end
+
 # Declare your gem's dependencies in rails_dynamic_errors.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
@@ -12,16 +27,3 @@ gemspec
 
 # To use debugger
 # gem 'debugger'
-
-rails_version = ENV["RAILS_VERSION"] || "default"
-
-rails = case rails_version
-  when "master"
-    {github: "rails/rails"}
-  when "default"
-    ">= 4.0.0"
-  else
-    "~> #{rails_version}"
-end
-
-gem "rails", rails

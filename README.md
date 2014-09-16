@@ -191,7 +191,7 @@ Before the tests you want to run with <variable name> set to <value> (e.g. 'acti
 
 ```
   context "tests with <variable name> set to <value>" do
-    around(:each)
+    around(:each) do
       original = set_environment_variable('<variable name>', false)
       example.run
       set_environment_variable('<variable name>', original)
